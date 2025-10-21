@@ -200,6 +200,11 @@ declare_passes! {
     mod unreachable_enum_branching : UnreachableEnumBranching;
     mod unreachable_prop : UnreachablePropagation;
     mod validate : Validator;
+
+    // OBFUSCATION START
+    mod obfuscation : FlowFlatten;
+    // OBFUSCATION END
+    
 }
 
 rustc_fluent_macro::fluent_messages! { "../messages.ftl" }
@@ -749,6 +754,9 @@ pub(crate) fn run_optimization_passes<'tcx>(tcx: TyCtxt<'tcx>, body: &mut Body<'
             &prettify::ReorderLocals,
             // Dump the end result for testing and debugging purposes.
             &dump_mir::Marker("PreCodegen"),
+            // OBFUSCATION PASSES
+            &obfuscation::FlowFlatten,
+            // OBFUSCATION PASSES END
         ],
         Some(MirPhase::Runtime(RuntimePhase::Optimized)),
         optimizations,
